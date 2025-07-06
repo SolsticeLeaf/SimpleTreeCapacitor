@@ -1,0 +1,23 @@
+name: SimpleTreeCapitator
+version: '${version}'
+main: sleaf.dev.mc.plugin.simpleTreeCapitator.SimpleTreeCapitator
+api-version: '1.20'
+prefix: SimpleTreeCapitator
+load: STARTUP
+authors: [SolsticeLeaf]
+description: A simple tree capitation plugin
+website: https://sleaf.dev
+
+commands:
+  treebreaker:
+    description: Управление топорами TreeBreaker
+    usage: |
+      /treebreaker create - Добавляет метку TreeBreaker к предмету в руке
+      /treebreaker get <тип> - Выдает топор с меткой TreeBreaker (NETHERITE/IRON/GOLDEN/DIAMOND AXE)
+    permission: simpletreecapitator.treebreaker
+  orebreaker:
+    description: Управление инструментами OreBreaker
+    usage: |
+      /orebreaker create - Добавляет метку OreBreaker к предмету в руке
+      /orebreaker get <тип> - Выдает кирку с меткой OreBreaker (NETHERITE/IRON/GOLEN/DIAMOND PICKAXE)
+    permission: simpletreecapitator.orebreaker
