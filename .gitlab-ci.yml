@@ -1,0 +1,57 @@
+stages:
+  - build
+  - shadowjar
+  - release
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+
+default:
+  tags:
+    - 'mais'
+  image: gradle:latest
+
+build:
+  stage: build
+  before_script:
+    - echo "Building..."
+  script:
+    - gradle clean build
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 hour
+
+shadowjar:
+  stage: shadowjar
+  before_script:
+    - echo "Creating shadowJar..."
+  script:
+    - gradle shadowJar
+  artifacts:
+    paths:
+      - build/libs/MCWeb-*.jar
+    expire_in: 1 hour
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: shadowjar
+      artifacts: true
+  script:
+    - VERSION=$(ls build/libs/MCWeb-*-all.jar | grep -oP 'MCWeb-\K[0-9]+\.[0-9]+\.[0-9]+')
+    - mv build/libs/MCWeb-${VERSION}-all.jar build/libs/MCWeb-${VERSION}.jar
+    - echo "Creating release for MCWeb ${VERSION}"
+  release:
+    name: 'MCWeb ${VERSION}'
+    description: '$CI_COMMIT_MESSAGE'
+    tag_name: '${VERSION}'
+    ref: '$CI_COMMIT_SHA'
+    assets:
+      links:
+        - name: 'MCWeb-${VERSION}.jar'
+          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/mcweb/${VERSION}/MCWeb-${VERSION}.jar'
+          filepath: '/mcweb/${VERSION}/MCWeb-${VERSION}.jar'
+          link_type: 'package'
