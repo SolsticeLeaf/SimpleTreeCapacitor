@@ -51,9 +51,9 @@ release:
     - mv build/libs/${PROJECT_NAME}-${VERSION}-all.jar build/libs/${PROJECT_NAME}-${VERSION}.jar
     - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
   release:
-    name: '${PROJECT_NAME} ${VERSION}'
+    name: '${PROJECT_NAME} v${VERSION}'
     description: '$CI_COMMIT_MESSAGE'
-    tag_name: '${VERSION}'
+    tag_name: 'v${VERSION}'
     ref: '$CI_COMMIT_SHA'
     assets:
       links:
