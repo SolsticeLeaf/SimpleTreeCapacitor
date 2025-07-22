@@ -50,14 +50,4 @@ release:
     - if [ -z "$VERSION" ]; then echo "Failed to extract version"; exit 1; fi
     - mv build/libs/${PROJECT_NAME}-${VERSION}-all.jar build/libs/${PROJECT_NAME}-${VERSION}.jar
     - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
-  release:
-    name: '${PROJECT_NAME} v${VERSION}'
-    description: '$CI_COMMIT_MESSAGE'
-    tag_name: 'v${VERSION}'
-    ref: '$CI_COMMIT_SHA'
-    assets:
-      links:
-        - name: '${PROJECT_NAME}-${VERSION}.jar'
-          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
-          filepath: '/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
-          link_type: 'package'
+    - release-cli create --name "${PROJECT_NAME} v${VERSION}" --description "$CI_COMMIT_MESSAGE" --tag-name "v${VERSION}" --ref "$CI_COMMIT_SHA" --assets-links "{\"name\":\"${PROJECT_NAME}-${VERSION}.jar\",\"url\":\"${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar\",\"link_type\":\"package\"}"
