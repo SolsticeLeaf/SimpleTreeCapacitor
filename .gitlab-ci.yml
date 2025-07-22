@@ -31,7 +31,7 @@ shadowjar:
     - gradle shadowJar
   artifacts:
     paths:
-      - build/libs/MCWeb-*.jar
+      - build/libs/*-all.jar
     expire_in: 1 hour
 
 release:
@@ -41,17 +41,19 @@ release:
     - job: shadowjar
       artifacts: true
   script:
-    - VERSION=$(ls build/libs/MCWeb-*-all.jar | grep -oP 'MCWeb-\K[0-9]+\.[0-9]+\.[0-9]+')
-    - mv build/libs/MCWeb-${VERSION}-all.jar build/libs/MCWeb-${VERSION}.jar
-    - echo "Creating release for MCWeb ${VERSION}"
+    - JAR_FILE=$(ls build/libs/*-all.jar)
+    - PROJECT_NAME=$(basename "$JAR_FILE" | grep -oP '.*(?=-\K[0-9]+\.[0-9]+\.[0-9]+-all.jar)')
+    - VERSION=$(basename "$JAR_FILE" | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
+    - mv "$JAR_FILE" "build/libs/${PROJECT_NAME}-${VERSION}.jar"
+    - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
   release:
-    name: 'MCWeb ${VERSION}'
+    name: '${PROJECT_NAME} ${VERSION}'
     description: '$CI_COMMIT_MESSAGE'
     tag_name: '${VERSION}'
     ref: '$CI_COMMIT_SHA'
     assets:
       links:
-        - name: 'MCWeb-${VERSION}.jar'
-          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/mcweb/${VERSION}/MCWeb-${VERSION}.jar'
-          filepath: '/mcweb/${VERSION}/MCWeb-${VERSION}.jar'
+        - name: '${PROJECT_NAME}-${VERSION}.jar'
+          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
+          filepath: '/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
           link_type: 'package'
