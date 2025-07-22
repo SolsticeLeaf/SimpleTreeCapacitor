@@ -42,8 +42,8 @@ release:
       artifacts: true
   script:
     - JAR_FILE=$(ls build/libs/*-all.jar)
-    - PROJECT_NAME=$(basename "$JAR_FILE" | grep -oP '.*(?=-\K[0-9]+\.[0-9]+\.[0-9]+-all.jar)')
-    - VERSION=$(basename "$JAR_FILE" | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
+    - PROJECT_NAME=$(basename "$JAR_FILE" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+-all\.jar$//')
+    - VERSION=$(basename "$JAR_FILE" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+)-all\.jar$/\1/')
     - mv "$JAR_FILE" "build/libs/${PROJECT_NAME}-${VERSION}.jar"
     - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
   release:
