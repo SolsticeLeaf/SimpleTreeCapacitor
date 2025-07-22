@@ -31,7 +31,7 @@ shadowjar:
     - gradle shadowJar
   artifacts:
     paths:
-      - build/libs/*-all.jar
+      - build/libs/SimpleTreeCapiator-*.jar
     expire_in: 1 hour
 
 release:
@@ -41,19 +41,17 @@ release:
     - job: shadowjar
       artifacts: true
   script:
-    - JAR_FILE=$(ls build/libs/*-all.jar)
-    - PROJECT_NAME=$(basename "$JAR_FILE" | sed -E 's/-[0-9]+\.[0-9]+\.[0-9]+-all\.jar$//')
-    - VERSION=$(basename "$JAR_FILE" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+)-all\.jar$/\1/')
-    - mv "$JAR_FILE" "build/libs/${PROJECT_NAME}-${VERSION}.jar"
-    - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
+    - VERSION=$(ls build/libs/SimpleTreeCapiator-*-all.jar | grep -oP 'SimpleTreeCapiator-\K[0-9]+\.[0-9]+\.[0-9]+')
+    - mv build/libs/SimpleTreeCapiator-${VERSION}-all.jar build/libs/SimpleTreeCapiator-${VERSION}.jar
+    - echo "Creating release for SimpleTreeCapiator ${VERSION}"
   release:
-    name: '${PROJECT_NAME} ${VERSION}'
+    name: 'SimpleTreeCapiator ${VERSION}'
     description: '$CI_COMMIT_MESSAGE'
     tag_name: '${VERSION}'
     ref: '$CI_COMMIT_SHA'
     assets:
       links:
-        - name: '${PROJECT_NAME}-${VERSION}.jar'
-          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
-          filepath: '/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
+        - name: 'SimpleTreeCapiator-${VERSION}.jar'
+          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/SimpleTreeCapiator/${VERSION}/SimpleTreeCapiator-${VERSION}.jar'
+          filepath: '/SimpleTreeCapiator/${VERSION}/SimpleTreeCapiator-${VERSION}.jar'
           link_type: 'package'
