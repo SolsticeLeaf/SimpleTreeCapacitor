@@ -3,6 +3,9 @@ stages:
   - shadowjar
   - release
 
+variables:
+  PROJECT_NAME: 'SimpleTreeCapitator'
+
 workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
@@ -29,9 +32,10 @@ shadowjar:
     - echo "Creating shadowJar..."
   script:
     - gradle shadowJar
+    - ls -la build/libs/
   artifacts:
     paths:
-      - build/libs/SimpleTreeCaptiator-*.jar
+      - build/libs/${PROJECT_NAME}-*-all.jar
     expire_in: 1 hour
 
 release:
@@ -42,17 +46,17 @@ release:
       artifacts: true
   script:
     - ls -la build/libs/ || echo "No files found in build/libs/"
-    - VERSION=$(ls build/libs/SimpleTreeCapiator-*-all.jar | sed -n 's/.*SimpleTreeCapiator-\([0-9]\+\.[0-9]\+\.[0-9]\+\)-all\.jar/\1/p')
-    - mv build/libs/SimpleTreeCapiator-${VERSION}-all.jar build/libs/SimpleTreeCapiator-${VERSION}.jar
-    - echo "Creating release for SimpleTreeCapiator ${VERSION}"
+    - VERSION=$(ls build/libs/${PROJECT_NAME}-*-all.jar | sed -n 's/.*${PROJECT_NAME}-\([0-9]\+\.[0-9]\+\.[0-9]\+\)-all\.jar/\1/p')
+    - mv build/libs/${PROJECT_NAME}-${VERSION}-all.jar build/libs/${PROJECT_NAME}-${VERSION}.jar
+    - echo "Creating release for ${PROJECT_NAME} ${VERSION}"
   release:
-    name: 'SimpleTreeCapiator ${VERSION}'
+    name: '${PROJECT_NAME} ${VERSION}'
     description: '$CI_COMMIT_MESSAGE'
     tag_name: '${VERSION}'
     ref: '$CI_COMMIT_SHA'
     assets:
       links:
-        - name: 'SimpleTreeCapiator-${VERSION}.jar'
-          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/SimpleTreeCapiator/${VERSION}/SimpleTreeCapiator-${VERSION}.jar'
-          filepath: '/SimpleTreeCapiator/${VERSION}/SimpleTreeCapiator-${VERSION}.jar'
+        - name: '${PROJECT_NAME}-${VERSION}.jar'
+          url: '$CI_API_V4_URL/projects/$CI_PROJECT_ID/packages/generic/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
+          filepath: '/${PROJECT_NAME}/${VERSION}/${PROJECT_NAME}-${VERSION}.jar'
           link_type: 'package'
