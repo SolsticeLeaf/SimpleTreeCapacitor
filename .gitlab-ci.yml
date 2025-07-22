@@ -10,7 +10,7 @@ workflow:
 default:
   tags:
     - 'mais'
-  image: gradle:latest
+  image: gradle:jdk17
 
 build:
   stage: build
